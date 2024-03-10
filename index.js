@@ -24,7 +24,7 @@ app.get('/api/products', async (req, res) => {
 });
 
 // Read API, to view the specifi create product
-app.get('/api/products/:id', async (req, res) => {
+app.get('/api/product/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const product = await Product.findById(id);
@@ -43,6 +43,35 @@ app.post('/api/products', async (req, res) => {
         res.status(500).json({message : error.message})
     }
 });
+
+// Update API, to update product with new data
+app.put('/api/product/:id', async (req, res) => {
+    try{
+        const { id } = req.params;
+        const product = await Product.findByIdAndUpdate(id, req.body);
+        if(!product){
+            return res.status(404).json({message : "Product not found!"});
+        }
+        const updatedProduct = await Product.findById(id); 
+        res.status(200).json(updatedProduct);
+    } catch (error){
+        res.status(500).json({message : error.message})
+    }
+});
+
+//Delete API, to delete the specific product
+ app.delete('/api/product/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const product = await Product.findByIdAndDelete(id);
+        if(!product){
+            return res.status(404).json({message : "Product not found"});
+        }
+        res.status(200).json({message : "Product deleted successfully"});
+    } catch (error) {
+        res.status(500).json({message : error.message});
+    }
+ })
 
 mongoose.connect("mongodb+srv://khantwaiyan11:WXb25x87x4fJNBxz@simplebackenddb.wvmxut6.mongodb.net/Simple-CRUD-Node-API?retryWrites=true&w=majority&appName=SimpleBackendDB").then(() => {
     console.log("Connected to DataBase!");
